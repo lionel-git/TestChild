@@ -14,12 +14,9 @@ namespace Runner
     {
         static int Main(string[] args)
         {
-
-
-            //Client
-            var client = new NamedPipeClientStream($"PipesOfPiece_{Process.GetCurrentProcess().Id}");
-            client.Connect(2000);
-            StreamWriter writer = new StreamWriter(client);
+            var server = new NamedPipeServerStream($"PipesOfPiece_{ Process.GetCurrentProcess().Id}");
+            server.WaitForConnection();
+            StreamWriter writer = new StreamWriter(server);
 
             try
             {
@@ -51,8 +48,8 @@ namespace Runner
                 return 1;
             }
 
-            //writer.WriteLine("OK");
-            //writer.Flush();
+            writer.WriteLine("OK");
+            writer.Flush();
             return 0;
         }
     }

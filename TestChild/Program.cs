@@ -29,9 +29,11 @@ namespace TestChild
                 Console.WriteLine("Process");
                 using (Process exeProcess = Process.Start(startInfo))
                 {
-                    var server = new NamedPipeServerStream($"PipesOfPiece_{exeProcess.Id}");
-                    server.WaitForConnection();
-                    StreamReader reader = new StreamReader(server);
+                    //Client
+                    var client = new NamedPipeClientStream($"PipesOfPiece_{exeProcess.Id}");
+                    client.Connect(2000);
+
+                    StreamReader reader = new StreamReader(client);
                     Console.WriteLine("Connected");
 
                     while (!exeProcess.WaitForExit(1000))
@@ -50,20 +52,21 @@ namespace TestChild
             }
         }
 
-        static void WaitTask(Task t)
-        {
-            while (!t.IsCompleted)
-                Thread.Sleep(1000);
-            Console.WriteLine($"Final status {t.Status}");
-        }
 
         static void Start()
         {
-            Task t1 = new Task( () => LaunchRunner("ex"));
-            t1.Start();
-            Task t2 = new Task( () => LaunchRunner("test"));
-            t2.Start();
-            Task.WaitAll(t1, t2);
+            Task[] t = new Task[10];
+            for (int i = 0; i < t.Length; i++)
+                if (i == 5)
+                    t[i] = new Task(() => LaunchRunner("ex"));
+                else
+                    t[i] = new Task(() => LaunchRunner("test"));
+            for (int i = 0; i < t.Length; i++)
+            {
+                t[i].Start();
+                Thread.Sleep(1000);
+            }
+            Task.WaitAll(t);
             Console.WriteLine("Tasks finished");
         }
 
