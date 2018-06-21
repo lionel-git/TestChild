@@ -18,7 +18,7 @@ namespace Runner
 
             //Client
             var client = new NamedPipeClientStream($"PipesOfPiece_{Process.GetCurrentProcess().Id}");
-            client.Connect();
+            client.Connect(2000);
             StreamWriter writer = new StreamWriter(client);
 
             try
@@ -45,12 +45,14 @@ namespace Runner
             {
                 Console.WriteLine(e);
                 writer.WriteLine(e.Message);
+                writer.WriteLine("Suite1");
+                writer.WriteLine("Suite2");
                 writer.Flush();
                 return 1;
             }
 
-            writer.WriteLine("OK");
-            writer.Flush();
+            //writer.WriteLine("OK");
+            //writer.Flush();
             return 0;
         }
     }

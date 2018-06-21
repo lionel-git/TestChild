@@ -12,29 +12,6 @@ namespace TestChild
 {
     class Program
     {
-
-        /*
-         * static void StartServer()
-        {
-            Task.Factory.StartNew(() =>
-            {
-                var server = new NamedPipeServerStream("PipesOfPiece");
-                server.WaitForConnection();
-                StreamReader reader = new StreamReader(server);
-                StreamWriter writer = new StreamWriter(server);
-                while (true)
-                {
-                    var line = reader.ReadLine();
-                    writer.WriteLine(String.Join("", line.Reverse()));
-                    writer.Flush();
-                }
-            });
-        }*/
-
-
-
-
-
         static void LaunchRunner(string arg)
         {
             Console.WriteLine("Process0");
@@ -44,7 +21,6 @@ namespace TestChild
             startInfo.FileName = "Runner.exe";
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             startInfo.Arguments = arg;
-
 
             try
             {
@@ -62,8 +38,8 @@ namespace TestChild
                     {
                         Console.WriteLine(exeProcess.Id);
                         Console.WriteLine("Start readline");
-                        var line = reader.ReadLine();
-                        Console.WriteLine($"line={line}");
+                        var line = reader.ReadToEnd();
+                        Console.WriteLine($"Read line={line}");
                     }
                     Console.WriteLine($"Process finished {exeProcess.Id} : {exeProcess.ExitCode}");
                 }
@@ -97,7 +73,6 @@ namespace TestChild
             try
             {
                 Console.WriteLine("Hello world");
-
                 Start();
             }
             catch (Exception e)
